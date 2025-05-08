@@ -20,8 +20,9 @@ export default {
 
         return data;
     },
-    setNursePreferences: async (id: number, preferences: unknown) => {
-        const { data } = await instance.post(`/nurses/${id}/preferences`, {
+    setNursePreferences: async (id: number, preferences: ShiftPreference[]) => {
+        const { data } = await instance.post(`/nurses/preferences`, {
+            id,
             preferences,
         });
         return data;

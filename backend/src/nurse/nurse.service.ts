@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { NurseEntity } from "./nurse.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { ShiftPreference } from "@m7-scheduler/dtos";
 
 @Injectable()
 export class NurseService {
@@ -14,7 +15,10 @@ export class NurseService {
         return this.nurseRepository.find();
     }
 
-    async setPreferences(id: number, preferences: any): Promise<NurseEntity> {
+    async setPreferences(
+        id: number,
+        preferences: ShiftPreference[]
+    ): Promise<NurseEntity> {
         const nurse = await this.nurseRepository.findOneByOrFail({ id });
         if (!nurse) {
             throw new Error(`Nurse with ID ${id} not found`);
