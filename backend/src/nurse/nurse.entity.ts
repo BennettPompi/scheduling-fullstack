@@ -6,12 +6,9 @@ import {
     BeforeInsert,
 } from "typeorm";
 
-import { ShiftEntity } from "../shift/shift.entity";
+import { ShiftEntity } from "@shift/shift.entity";
+import { DefaultShiftPreference, ShiftPreference } from "@m7-scheduler/dtos";
 
-export type ShiftPreference = {
-    dayShift: boolean;
-    nightShift: boolean;
-};
 @Entity("nurses")
 export class NurseEntity {
     @PrimaryGeneratedColumn()
@@ -31,10 +28,7 @@ export class NurseEntity {
     @BeforeInsert()
     setDefaultPreferences() {
         if (!this.preferences) {
-            this.preferences = Array(7).fill({
-                dayShift: false,
-                nightShift: false,
-            });
+            this.preferences = Array(7).fill(DefaultShiftPreference());
         }
     }
 }
