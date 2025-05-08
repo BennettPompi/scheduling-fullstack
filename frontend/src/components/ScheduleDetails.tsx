@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useEffect, useState } from "react";
+import { ScheduleDTO } from "@m7-scheduler/dtos";
 interface ScheduleDisplayProps {
-  scheduleId: number;
+    scheduleId: number;
 }
 
 const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({ scheduleId }) => {
-  const [schedule, setSchedule] = useState<unknown | null>(null);
+    const [schedule, setSchedule] = useState<ScheduleDTO | null>(null);
 
-  useEffect(() => {
-    // TODO: Fetch the schedule, etc.
-    // setSchedule(...);
-  }, [scheduleId]);
+    useEffect(() => {
+        // TODO: Fetch the schedule, etc.
+        // setSchedule(...);
+    }, [scheduleId]);
 
-  if (!schedule) {
-    return <div>Loading...</div>;
-  }
+    if (!schedule) {
+        return <div>Loading...</div>;
+    }
 
-  return (
-    <div>
-      <h2>Schedule {schedule.id}</h2>
-      {/* TODO: Display the assigned shifts in the schedule */}
-    </div>
-  );
+    return (
+        <div>
+            <h2>Schedule {schedule.id}</h2>
+            {/* TODO: Display the assigned shifts in the schedule */}
+        </div>
+    );
 };
 
 export default ScheduleDetails;
