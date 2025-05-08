@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { FormEventHandler, useEffect, useState } from "react";
 import * as api from "../services/apiService";
 import { DefaultShiftPreference, ShiftPreference } from "@m7-scheduler/dtos";
 
@@ -39,9 +39,7 @@ const NursePreferences = ({
             let shiftsToPost = shiftValues.map((shift, ind) => {
                 return { dayOfWeek: days[ind], shift: shift };
             });
-            shiftsToPost = shiftsToPost.filter(
-                (shiftDict) => shiftDict.shift !== ""
-            );
+
             // TODO: call the API to submit preferences
             console.error("Not yet implemented");
         };
@@ -50,33 +48,24 @@ const NursePreferences = ({
     };
 
     useEffect(() => {
-        // converts the preferences from the API to the format that is used in the state of nursePreferredShifts
         const fetchPreferences = async () => {
             let nursePreferences = await api.default.getNursePreferences(id);
             if (!nursePreferences) {
-                nursePreferences = [];
+                throw Error(`No preferences found for nurse ${name}: ${id}`);
             }
-            const newPreferredShifts = {
-                Monday: "",
-                Tuesday: "",
-                Wednesday: "",
-                Thursday: "",
-                Friday: "",
-                Saturday: "",
-                Sunday: "",
-            };
-            nursePreferences.forEach((nursePreference) => {
-                newPreferredShifts[nursePreference.dayOfWeek] =
-                    nursePreference.shift;
-            });
-            setNursePreferredShifts(newPreferredShifts);
+
+            setNursePreferredShifts(nursePreferences);
         };
         fetchPreferences().catch(console.error);
     }, [id]);
 
     // changing the preferredShifts in the page depending on the checkboxes
-    const handleChange = (event) => {
-        for (const child of Array.from(event.currentTarget.children)) {
+    const handleChange: FormEventHandler<HTMLTableDataCellElement> = (
+        event: React.FormEvent
+    ) => {
+        for (const child of Array.from(
+            event.currentTarget.children
+        ) as HTMLInputElement[]) {
             if (child.type == "checkbox" && child.checked) {
                 setNursePreferredShifts({
                     ...nursePreferredShifts,
@@ -116,20 +105,22 @@ const NursePreferences = ({
                                             id
                                         }
                                     >
-                                        <td>{day}</td>
+                                        <td>{daysOfWeek[idx]}</td>
                                         <td onChange={handleChange}>
-                                            {nursePreferredShifts[day] ===
-                                            shifts[0] ? (
+                                            {nursePreferredShifts[idx]
+                                                .dayShift === true ? (
                                                 <input
                                                     type="checkbox"
-                                                    name={day}
+                                                    name={daysOfWeek[idx]}
                                                     value={shifts[0]}
                                                     checked
                                                 />
                                             ) : (
                                                 <input
                                                     type="checkbox"
-                                                    name={day}
+                                                    name={
+                                                        daysOfWeek[idx] + "-day"
+                                                    }
                                                     value={shifts[0]}
                                                 />
                                             )}
@@ -139,18 +130,24 @@ const NursePreferences = ({
                                             >
                                                 {shifts[0]}
                                             </label>
-                                            {nursePreferredShifts[day] ===
-                                            shifts[1] ? (
+                                            {nursePreferredShifts[idx]
+                                                .nightShift === true ? (
                                                 <input
                                                     type="checkbox"
-                                                    name={day}
+                                                    name={
+                                                        daysOfWeek[idx] +
+                                                        "-night"
+                                                    }
                                                     value={shifts[1]}
                                                     checked
                                                 />
                                             ) : (
                                                 <input
                                                     type="checkbox"
-                                                    name={day}
+                                                    name={
+                                                        daysOfWeek[idx] +
+                                                        "-night"
+                                                    }
                                                     value={shifts[1]}
                                                 />
                                             )}
