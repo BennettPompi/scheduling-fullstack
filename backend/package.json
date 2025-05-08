@@ -24,7 +24,7 @@
         "migrations:revert": "typeorm-ts-node-commonjs -d src/ormconfig.ts migration:revert"
     },
     "dependencies": {
-        "@m7-scheduler/dtos": "file:../DTOs",
+        "@m7-scheduler/dtos": "file:../_DTOs",
         "@faker-js/faker": "^8.4.1",
         "@nestjs/common": "^9.4.3",
         "@nestjs/core": "^9.4.3",

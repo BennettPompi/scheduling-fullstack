@@ -12,8 +12,8 @@ importers:
         specifier: ^8.4.1
         version: 8.4.1
       '@m7-scheduler/dtos':
-        specifier: file:../DTOs
-        version: file:../DTOs
+        specifier: file:../_DTOs
+        version: file:../_DTOs
       '@nestjs/common':
         specifier: ^9.4.3
         version: 9.4.3(class-validator@0.14.1)(reflect-metadata@0.1.14)(rxjs@7.8.1)
@@ -447,8 +447,8 @@ packages:
     resolution: {integrity: sha512-Z7C/xXCiGWsg0KuKsHTKJxbWhpI3Vs5GwLfOean7MGyVFGqdRgBbAjOCh6u4bbjPc/8MJ2pZmK/0DLdCbivLDA==}
     engines: {node: '>=8'}
 
-  '@m7-scheduler/dtos@file:../DTOs':
-    resolution: {directory: ../DTOs, type: directory}
+  '@m7-scheduler/dtos@file:../_DTOs':
+    resolution: {directory: ../_DTOs, type: directory}
 
   '@nestjs/cli@9.5.0':
     resolution: {integrity: sha512-Z7q+3vNsQSG2d2r2Hl/OOj5EpfjVx3OfnJ9+KuAsOdw1sKLm7+Zc6KbhMFTd/eIvfx82ww3Nk72xdmfPYCulWA==}
@@ -3513,7 +3513,7 @@ snapshots:
 
   '@lukeed/csprng@1.1.0': {}
 
-  '@m7-scheduler/dtos@file:../DTOs': {}
+  '@m7-scheduler/dtos@file:../_DTOs': {}
 
   '@nestjs/cli@9.5.0':
     dependencies:
