@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    OneToMany,
+    BeforeInsert,
+} from "typeorm";
 
 import { ShiftEntity } from "../shift/shift.entity";
 
@@ -15,11 +21,20 @@ export class NurseEntity {
     name: string;
 
     @Column("json", {
-        nullable: false,
-        default: Array(7).fill({ dayShift: false, nightShift: false }),
+        nullable: true,
     })
     preferences: ShiftPreference[];
 
     @OneToMany(() => ShiftEntity, (shift) => shift.nurse)
     shifts: ShiftEntity[];
+
+    @BeforeInsert()
+    setDefaultPreferences() {
+        if (!this.preferences) {
+            this.preferences = Array(7).fill({
+                dayShift: false,
+                nightShift: false,
+            });
+        }
+    }
 }
