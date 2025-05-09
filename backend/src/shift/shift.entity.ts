@@ -1,34 +1,29 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
 
-import { NurseEntity } from '../nurse/nurse.entity';
-import { ScheduleEntity } from '../schedule/schedule.entity';
+import { NurseEntity } from "../nurse/nurse.entity";
+import { ScheduleEntity } from "../schedule/schedule.entity";
 
-export type ShiftType = 'day' | 'night';
+export type ShiftType = "day" | "night";
 export type ShiftRequirements = {
-  shift: ShiftType;
-  nursesRequired: number;
-  dayOfWeek: string;
+    shift: ShiftType;
+    nursesRequired: number;
+    dayOfWeek: string;
 };
 
-@Entity('shifts')
+@Entity("shifts")
 export class ShiftEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @Column({ type: 'date' })
-  date: Date;
+    @Column({ type: "varchar", length: 15 })
+    dayOfWeek: string;
 
-  @Column({ type: 'varchar', length: 10 })
-  type: ShiftType;
+    @Column({ type: "varchar", length: 10 })
+    type: ShiftType;
 
-  @ManyToOne(() => NurseEntity, nurse => nurse.shifts)
-  nurse: NurseEntity;
+    @ManyToOne(() => NurseEntity, (nurse) => nurse.shifts)
+    nurse: NurseEntity;
 
-  @ManyToOne(() => ScheduleEntity, (schedule) => schedule.shifts)
-  schedule: ScheduleEntity;
+    @ManyToOne(() => ScheduleEntity, (schedule) => schedule.shifts)
+    schedule: ScheduleEntity;
 }

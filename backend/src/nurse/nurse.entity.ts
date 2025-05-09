@@ -6,7 +6,7 @@ import {
     BeforeInsert,
 } from "typeorm";
 
-import { ShiftEntity } from "@shift/shift.entity";
+import { ShiftEntity } from "../shift/shift.entity";
 import { DefaultShiftPreference, ShiftPreference } from "@m7-scheduler/dtos";
 
 @Entity("nurses")
