@@ -11,7 +11,15 @@ export class ScheduleService {
     ) {}
 
     async generateSchedule(startDate: Date, endDate: Date): Promise<any> {
-        // TODO: Complete the implementation of this method
+        /* 
+            1. Go through nurses/prefs, create list of nurses available for each shift
+            2. Maintain count of nurses assigned to each shift, sort each shift pool by count (asc)
+            3. For each shift, assign nurses from ordered pool until all shifts are filled
+                a. Check that the nurse is not assigned to the previous shift.
+                If they are, exclude them unless we need them
+                If they were assigned to the previous 2 shifts, exclude them no matter what
+            FINALLY: Iterate through shift assignments, create shift objects for each of them
+        */
         throw new NotImplementedException();
     }
 
