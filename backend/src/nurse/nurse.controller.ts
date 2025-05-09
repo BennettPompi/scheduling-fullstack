@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Query } from "@nestjs/common";
+import { Controller, Get, Post, Body, Param } from "@nestjs/common";
 import { NurseService } from "./nurse.service";
 import { NurseEntity } from "./nurse.entity";
 import { ShiftPreference } from "@m7-scheduler/dtos";
@@ -19,8 +19,8 @@ export class NurseController {
     ): Promise<any> {
         return this.nurseService.setPreferences(id, preferences);
     }
-    @Get("preferences")
-    async getNursePreferences(@Query("id") id: number): Promise<any> {
+    @Get("preferences/:id")
+    async getNursePreferences(@Param("id") id: number): Promise<any> {
         return this.nurseService.getPreferences(id);
     }
 }

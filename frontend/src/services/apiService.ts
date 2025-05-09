@@ -15,7 +15,7 @@ export default {
     },
     getNursePreferences: async (id: number) => {
         const { data }: AxiosResponse<ShiftPreference[]> = await instance.get(
-            `/nurses/preferences/?id=${id}`
+            `/nurses/preferences/${id}`
         );
 
         return data;
