@@ -4,10 +4,15 @@ import { NurseEntity } from "../nurse/nurse.entity";
 import { ScheduleEntity } from "../schedule/schedule.entity";
 
 export type ShiftType = "day" | "night";
-export type ShiftRequirements = {
+export type ShiftRequirementsRaw = {
     shift: ShiftType;
     nursesRequired: number;
     dayOfWeek: string;
+};
+export type ShiftRequirements = {
+    shift: ShiftType;
+    nursesRequired: number;
+    dayOfWeek: number;
 };
 
 @Entity("shifts")
@@ -16,7 +21,7 @@ export class ShiftEntity {
     id: number;
 
     @Column({ type: "varchar", length: 15 })
-    dayOfWeek: string;
+    dayOfWeek: number;
 
     @Column({ type: "varchar", length: 10 })
     type: ShiftType;

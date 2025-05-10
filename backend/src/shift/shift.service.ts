@@ -3,7 +3,11 @@ import * as path from "path";
 import { Injectable, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { ShiftEntity, ShiftRequirements } from "./shift.entity";
+import {
+    ShiftEntity,
+    ShiftRequirements,
+    ShiftRequirementsRaw,
+} from "./shift.entity";
 import { ScheduleEntity } from "@src/schedule/schedule.entity";
 import { ScheduleShift } from "@src/schedule/schedule.service";
 import { NurseEntity } from "@src/nurse/nurse.entity";
@@ -52,9 +56,23 @@ export class ShiftService {
             process.cwd(),
             "./src/shift/shiftRequirements.json"
         );
+        const dayOfWeekMapping: { [key: string]: number } = {
+            Monday: 0,
+            Tuesday: 1,
+            Wednesday: 2,
+            Thursday: 3,
+            Friday: 4,
+            Saturday: 5,
+            Sunday: 6,
+        };
         const fileContents = fs.readFileSync(filePath, "utf8");
-        const shiftRequirements: ShiftRequirements[] =
+        const shiftRequirements: ShiftRequirementsRaw[] =
             JSON.parse(fileContents)["shiftRequirements"];
-        return shiftRequirements;
+        return shiftRequirements.map((shift) => {
+            return {
+                ...shift,
+                dayOfWeek: dayOfWeekMapping[shift.dayOfWeek],
+            };
+        });
     }
 }
