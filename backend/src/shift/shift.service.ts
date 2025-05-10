@@ -56,15 +56,17 @@ export class ShiftService {
             process.cwd(),
             "./src/shift/shiftRequirements.json"
         );
-        const dayOfWeekMapping: { [key: string]: number } = {
-            Monday: 0,
-            Tuesday: 1,
-            Wednesday: 2,
-            Thursday: 3,
-            Friday: 4,
-            Saturday: 5,
-            Sunday: 6,
-        };
+        const dayOfWeekMapping = Object.fromEntries(
+            [
+                "Monday",
+                "Tuesday",
+                "Wednesday",
+                "Thursday",
+                "Friday",
+                "Saturday",
+                "Sunday",
+            ].map((day, index) => [day, index])
+        );
         const fileContents = fs.readFileSync(filePath, "utf8");
         const shiftRequirements: ShiftRequirementsRaw[] =
             JSON.parse(fileContents)["shiftRequirements"];
