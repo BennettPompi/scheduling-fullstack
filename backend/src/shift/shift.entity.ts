@@ -20,7 +20,7 @@ export class ShiftEntity {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: "varchar", length: 15 })
+    @Column({ type: "int" })
     dayOfWeek: number;
 
     @Column({ type: "varchar", length: 10 })
