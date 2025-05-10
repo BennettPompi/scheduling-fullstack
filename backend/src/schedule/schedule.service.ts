@@ -13,7 +13,7 @@ type SimpleNurse = {
     preferences: ShiftPreference[];
     assignedCount: number;
 };
-type ScheduleShift = ShiftRequirements & {
+export type ScheduleShift = ShiftRequirements & {
     assignedNurses: SimpleNurse[];
     availableNurses: SimpleNurse[];
 };
@@ -25,11 +25,7 @@ export class ScheduleService {
         private readonly shiftService: ShiftService,
         private readonly nurseService: NurseService
     ) {}
-    createShifts(shiftsRaw: ScheduleShift): ShiftEntity[] {
-        const shifts: ShiftEntity[] = [];
 
-        return shifts;
-    }
     async generateSchedule(): Promise<ScheduleEntity> {
         /* 
             1. Go through nurses/prefs, create list of nurses available for each shift
@@ -61,12 +57,12 @@ export class ScheduleService {
 
         for (const nurse of nurses) {
             const preferences = nurse.preferences;
-            for (let i = 0; i < preferences.length; i += 2) {
+            for (let i = 0; i < preferences.length; i += 1) {
                 const dayPref = preferences[i];
                 if (dayPref.dayShift == true)
-                    schedule[i].availableNurses.push(nurse);
+                    schedule[2 * i].availableNurses.push(nurse);
                 if (dayPref.nightShift == true)
-                    schedule[i + 1].availableNurses.push(nurse);
+                    schedule[2 * i + 1].availableNurses.push(nurse);
             }
         }
         for (let i = 0; i < schedule.length; i++) {
@@ -90,6 +86,7 @@ export class ScheduleService {
                     continue;
                 }
                 shift.assignedNurses.push(nurse);
+                nurse.assignedCount++;
             }
             // if we need more, pull double shift nurses until we have enough or run out
             if (shift.assignedNurses.length < shift.nursesRequired) {
@@ -97,10 +94,16 @@ export class ScheduleService {
                     if (shift.assignedNurses.length == shift.nursesRequired)
                         break;
                     shift.assignedNurses.push(nurse);
+                    nurse.assignedCount++;
                 }
             }
         }
         const dbSchedule = new ScheduleEntity();
+        await this.scheduleRepository.save(dbSchedule);
+        dbSchedule.shifts = await this.shiftService.createShifts(
+            schedule,
+            dbSchedule
+        );
 
         return dbSchedule;
     }

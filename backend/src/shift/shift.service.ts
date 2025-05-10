@@ -4,6 +4,9 @@ import { Injectable, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ShiftEntity, ShiftRequirements } from "./shift.entity";
+import { ScheduleEntity } from "@src/schedule/schedule.entity";
+import { ScheduleShift } from "@src/schedule/schedule.service";
+import { NurseEntity } from "@src/nurse/nurse.entity";
 
 @Injectable()
 export class ShiftService {
@@ -25,7 +28,25 @@ export class ShiftService {
             schedule: { id: Number(scheduleId) },
         });
     }
-
+    async createShifts(
+        shiftsRaw: ScheduleShift[],
+        schedule: ScheduleEntity
+    ): Promise<ShiftEntity[]> {
+        const shifts: ShiftEntity[] = [];
+        for (const shift of shiftsRaw) {
+            for (const nurse of shift.assignedNurses) {
+                const newShift = this.shiftRepository.create({
+                    dayOfWeek: shift.dayOfWeek,
+                    type: shift.shift,
+                    nurse: { id: nurse.id } as NurseEntity,
+                    schedule: schedule,
+                });
+                await this.shiftRepository.save(newShift);
+                shifts.push(newShift);
+            }
+        }
+        return shifts;
+    }
     async getShiftRequirements(): Promise<ShiftRequirements[]> {
         const filePath = path.join(
             process.cwd(),

@@ -107,6 +107,16 @@ function App() {
                     </tbody>
                 </table>
             </div>
+            <div>
+                <button
+                    onClick={async () => {
+                        const schedule = await api.default.generateSchedule();
+                        setSchedules([schedule]);
+                    }}
+                >
+                    Generate Schedule
+                </button>
+            </div>
             <div className="card">
                 <h2>Schedules</h2>
                 {schedules &&
