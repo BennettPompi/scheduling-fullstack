@@ -3,6 +3,7 @@ import * as api from "./services/apiService";
 import m7Logo from "/Logo-black.png";
 import "./App.css";
 import NursePreferences from "./components/NursePreferences";
+import ScheduleDetails from "./components/ScheduleDetails";
 
 function App() {
     const [nurses, setNurses] = useState<unknown[] | null>(null);
@@ -119,12 +120,27 @@ function App() {
             </div>
             <div className="card">
                 <h2>Schedules</h2>
-                {schedules &&
-                    schedules.map((schedule: any) => (
-                        <div className="schedule" key={schedule.id}>
-                            {/* TODO: Display table of available schedules */}
-                        </div>
-                    ))}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Created At</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {schedules &&
+                            schedules.map((schedule: any) => (
+                                <tr key={schedule.id}>
+                                    <td>{schedule.id}</td>
+                                    <td>
+                                        <ScheduleDetails
+                                            scheduleId={schedule.id}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                    </tbody>
+                </table>
                 {!schedules ||
                     (schedules.length === 0 && (
                         <div>

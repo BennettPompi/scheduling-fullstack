@@ -113,7 +113,14 @@ export class ScheduleService {
     }
 
     async getScheduleById(id: number): Promise<any> {
-        return this.scheduleRepository.findOneByOrFail({ id });
+        return this.scheduleRepository.findOneOrFail({
+            where: { id },
+            relations: {
+                shifts: {
+                    nurse: true,
+                },
+            },
+        });
     }
 
     async getScheduleRequirements(): Promise<any> {
