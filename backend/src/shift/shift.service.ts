@@ -3,11 +3,8 @@ import * as path from "path";
 import { Injectable, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import {
-    ShiftEntity,
-    ShiftRequirements,
-    ShiftRequirementsRaw,
-} from "./shift.entity";
+import { ShiftEntity, ShiftRequirementsRaw } from "./shift.entity";
+import { ShiftRequirements } from "@m7-scheduler/dtos";
 import { ScheduleEntity } from "@src/schedule/schedule.entity";
 import { ScheduleShift } from "@src/schedule/schedule.service";
 import { NurseEntity } from "@src/nurse/nurse.entity";

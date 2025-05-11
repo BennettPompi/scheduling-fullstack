@@ -4,7 +4,7 @@ import { Repository } from "typeorm";
 import { ScheduleEntity } from "./schedule.entity";
 import { ShiftService } from "@src/shift/shift.service";
 import { NurseService } from "@src/nurse/nurse.service";
-import { ShiftEntity, ShiftRequirements } from "@src/shift/shift.entity";
+import { ShiftRequirements } from "@m7-scheduler/dtos";
 import { ShiftPreference } from "@m7-scheduler/dtos";
 import { NurseEntity } from "@src/nurse/nurse.entity";
 

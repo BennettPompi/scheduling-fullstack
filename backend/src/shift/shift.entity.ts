@@ -9,11 +9,6 @@ export type ShiftRequirementsRaw = {
     nursesRequired: number;
     dayOfWeek: string;
 };
-export type ShiftRequirements = {
-    shift: ShiftType;
-    nursesRequired: number;
-    dayOfWeek: number;
-};
 
 @Entity("shifts")
 export class ShiftEntity {

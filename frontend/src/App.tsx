@@ -4,10 +4,11 @@ import m7Logo from "/Logo-black.png";
 import "./App.css";
 import NursePreferences from "./components/NursePreferences";
 import ScheduleDetails from "./components/ScheduleDetails";
+import { ShiftRequirements } from "@m7-scheduler/dtos";
 
 function App() {
     const [nurses, setNurses] = useState<unknown[] | null>(null);
-    const [requirements, setRequirements] = useState<unknown[] | null>(null);
+    const [requirements, setRequirements] = useState<ShiftRequirements[]>([]);
     const [schedules, setSchedules] = useState<unknown[] | null>(null);
     const days = [
         "Monday",
@@ -100,7 +101,7 @@ function App() {
                         {requirements &&
                             requirements.map((req: any) => (
                                 <tr key={req.dayOfWeek + "-" + req.shift}>
-                                    <td>{req.dayOfWeek}</td>
+                                    <td>{days[req.dayOfWeek]}</td>
                                     <td>{req.shift}</td>
                                     <td>{req.nursesRequired}</td>
                                 </tr>
@@ -135,6 +136,7 @@ function App() {
                                     <td>
                                         <ScheduleDetails
                                             scheduleId={schedule.id}
+                                            requirements={requirements}
                                         />
                                     </td>
                                 </tr>
