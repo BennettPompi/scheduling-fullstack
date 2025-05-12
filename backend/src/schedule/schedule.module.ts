@@ -4,7 +4,7 @@ import { ScheduleService } from "./schedule.service";
 import { ScheduleController } from "./schedule.controller";
 import { ScheduleEntity } from "./schedule.entity";
 import { ShiftModule } from "../shift/shift.module";
-import { NurseModule } from "@src/nurse/nurse.module";
+import { NurseModule } from "../nurse/nurse.module";
 
 @Module({
     imports: [

@@ -4,7 +4,7 @@ import m7Logo from "/Logo-black.png";
 import "./App.css";
 import NursePreferences from "./components/NursePreferences";
 import ScheduleDetails from "./components/ScheduleDetails";
-import { ScheduleDTO, ShiftRequirements } from "@m7-scheduler/dtos";
+import { NurseDTO, ScheduleDTO, ShiftRequirements } from "@m7-scheduler/dtos";
 
 export const days = [
     "Monday",
@@ -17,11 +17,9 @@ export const days = [
 ];
 
 function App() {
-    const [nurses, setNurses] = useState<{ id: number; name: string }[] | null>(
-        null
-    );
+    const [nurses, setNurses] = useState<NurseDTO[]>([]);
     const [requirements, setRequirements] = useState<ShiftRequirements[]>([]);
-    const [schedules, setSchedules] = useState<ScheduleDTO[] | null>(null);
+    const [schedules, setSchedules] = useState<ScheduleDTO[]>([]);
 
     useEffect(() => {
         const fetchNurses = async () => {
@@ -75,7 +73,7 @@ function App() {
                     </thead>
                     <tbody>
                         {nurses &&
-                            nurses.map((nurse: any) => (
+                            nurses.map((nurse: NurseDTO) => (
                                 <tr key={nurse.id}>
                                     <td>{nurse.id}</td>
                                     <td>
@@ -102,7 +100,7 @@ function App() {
                     </thead>
                     <tbody>
                         {requirements &&
-                            requirements.map((req: any) => (
+                            requirements.map((req: ShiftRequirements) => (
                                 <tr key={req.dayOfWeek + "-" + req.shift}>
                                     <td>{days[req.dayOfWeek]}</td>
                                     <td>{req.shift}</td>
@@ -135,18 +133,20 @@ function App() {
                     </thead>
                     <tbody>
                         {schedules &&
-                            schedules.map((schedule: any) => (
-                                <tr key={schedule.id}>
-                                    <td>{schedule.id}</td>
-                                    <td>
-                                        <ScheduleDetails
-                                            schedule={schedule}
-                                            requirements={requirements}
-                                            nurses={nurses}
-                                        />
-                                    </td>
-                                </tr>
-                            ))}
+                            schedules
+                                .map((schedule: ScheduleDTO) => (
+                                    <tr key={schedule.id}>
+                                        <td>{schedule.id}</td>
+                                        <td>
+                                            <ScheduleDetails
+                                                schedule={schedule}
+                                                requirements={requirements}
+                                                nurses={nurses}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))
+                                .reverse()}
                     </tbody>
                 </table>
                 {!schedules ||

@@ -2,11 +2,10 @@ import { Injectable, NotImplementedException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ScheduleEntity } from "./schedule.entity";
-import { ShiftService } from "@src/shift/shift.service";
-import { NurseService } from "@src/nurse/nurse.service";
+import { ShiftService } from "../shift/shift.service";
+import { NurseService } from "../nurse/nurse.service";
 import { ShiftRequirements } from "@m7-scheduler/dtos";
 import { ShiftPreference } from "@m7-scheduler/dtos";
-import { NurseEntity } from "@src/nurse/nurse.entity";
 
 type SimpleNurse = {
     id: number;
@@ -128,12 +127,10 @@ export class ScheduleService {
             },
         });
     }
-
-    async getScheduleRequirements(): Promise<any> {
-        // TODO: Complete the implementation of this method
-        // Schedule requirements can be hard-coded
-        // Requirements must indicate the number of nurses required for each shift type on each day of a week
-        // Create the requirements as JSON and make it available via this method
-        throw new NotImplementedException();
+    async deleteSchedule(id: number): Promise<void> {
+        const schedule = await this.scheduleRepository.findOneOrFail({
+            where: { id },
+        });
+        await this.scheduleRepository.remove(schedule);
     }
 }

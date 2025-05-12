@@ -1,4 +1,4 @@
-import { NurseDto } from "./NurseDto";
+import { NurseDTO } from "./NurseDto";
 
 export type ShiftType = "day" | "night";
 export type ShiftDTO = {
@@ -6,6 +6,6 @@ export type ShiftDTO = {
     id: number;
     // The day of the week represented as a number (0-6, where 0 is Monday)
     dayOfWeek: number;
-    nurse?: NurseDto;
+    nurse?: NurseDTO;
     scheduleId: number;
 };

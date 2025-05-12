@@ -5,6 +5,7 @@ import {
     Param,
     Body,
     NotImplementedException,
+    Delete,
 } from "@nestjs/common";
 import { ScheduleService } from "./schedule.service";
 import { ScheduleEntity } from "./schedule.entity";
@@ -27,5 +28,9 @@ export class ScheduleController {
     @Post()
     async generateSchedule(): Promise<ScheduleEntity> {
         return this.scheduleService.generateSchedule();
+    }
+    @Delete("/:id")
+    async deleteSchedule(@Param("id") id: number): Promise<void> {
+        return await this.scheduleService.deleteSchedule(id);
     }
 }

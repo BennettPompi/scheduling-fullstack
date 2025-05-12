@@ -1,26 +1,26 @@
 import {
-  Entity,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+    Entity,
+    PrimaryGeneratedColumn,
+    OneToMany,
+    CreateDateColumn,
+    UpdateDateColumn,
+} from "typeorm";
 
-import { ShiftEntity } from '../shift/shift.entity';
+import { ShiftEntity } from "../shift/shift.entity";
 
-@Entity('schedules')
+@Entity("schedules")
 export class ScheduleEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+    @PrimaryGeneratedColumn()
+    id: number;
 
-  @OneToMany(() => ShiftEntity, (shift) => shift.schedule, {
-      eager: true,
-  })
-  shifts: ShiftEntity[];
+    @OneToMany(() => ShiftEntity, (shift) => shift.schedule, {
+        eager: true,
+    })
+    shifts: ShiftEntity[];
 
-  @CreateDateColumn()
-  created: Date;
+    @CreateDateColumn()
+    created: Date;
 
-  @UpdateDateColumn()
-  updated: Date;
+    @UpdateDateColumn()
+    updated: Date;
 }

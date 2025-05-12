@@ -26,7 +26,6 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
         nurseShiftMap[shift.nurse.id][shiftIdx] = true;
     });
 
-    // Build requirements lookup: dayOfWeek x shiftType -> nursesRequired
     const reqsArray = requirements.map((req) => req.nursesRequired);
     const assignedCountArray: number[] = Array(14).fill(0);
     schedule.shifts?.forEach((shift: ShiftDTO) => {
@@ -64,8 +63,7 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                 ))}
                             </tr>
                             <tr>
-                                <th></th>
-                                {/* CLEAN THIS UP */}
+                                <th />
                                 {days.map((day, idx) => [
                                     <th
                                         key={day + "-day"}
