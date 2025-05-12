@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ScheduleDTO, ShiftDTO } from "@m7-scheduler/dtos";
 import { ShiftRequirements, NurseDTO } from "@m7-scheduler/dtos";
 import { days } from "../App";
@@ -15,6 +15,22 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
     nurses,
 }) => {
     const [showDetails, setShowDetails] = useState(false);
+    const tableRef = useRef<HTMLTableElement>(null);
+
+    useEffect(() => {
+        if (showDetails && tableRef.current) {
+            const rows = Array.from(
+                tableRef.current.querySelectorAll<HTMLTableRowElement>("tr")
+            );
+            const maxHeight = rows.reduce<number>((max, row) => {
+                const h = row.getBoundingClientRect().height;
+                return h > max ? h : max;
+            }, 0);
+            rows.forEach((row) => {
+                row.style.height = `${maxHeight}px`;
+            });
+        }
+    }, [showDetails, schedule, nurses]);
 
     const nurseShiftMap: Record<number, boolean[]> = {};
 
@@ -50,14 +66,24 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                 <div>
                     <h3>Schedule Details</h3>
                     <table
-                        border={1}
-                        style={{ borderCollapse: "collapse", width: "100%" }}
+                        ref={tableRef}
+                        style={{
+                            borderCollapse: "collapse",
+                            width: "100%",
+                            border: "1px solid #444",
+                        }}
                     >
                         <thead>
                             <tr>
-                                <th>Nurse</th>
+                                <th style={{ border: "1px solid #444" }}>
+                                    Nurse
+                                </th>
                                 {days.map((day) => (
-                                    <th key={day} colSpan={2}>
+                                    <th
+                                        key={day}
+                                        colSpan={2}
+                                        style={{ border: "1px solid #444" }}
+                                    >
                                         {day}
                                     </th>
                                 ))}
@@ -68,6 +94,7 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                     <th
                                         key={day + "-day"}
                                         style={{
+                                            border: "1px solid #444",
                                             background:
                                                 meetsReqsArr[idx * 2] ?? false
                                                     ? "#d4ffd4"
@@ -81,6 +108,7 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                     <th
                                         key={day + "-night"}
                                         style={{
+                                            border: "1px solid #444",
                                             background:
                                                 meetsReqsArr[idx * 2 + 1] ??
                                                 false
@@ -108,9 +136,12 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                                 <td
                                                     key={idx + "-day"}
                                                     style={{
+                                                        border: "1px solid #444",
                                                         background: shift
                                                             ? "#d4ffd4"
                                                             : "#ffd4d4",
+                                                        textAlign: "center",
+                                                        verticalAlign: "middle",
                                                     }}
                                                 >
                                                     {shift ? "X" : ""}

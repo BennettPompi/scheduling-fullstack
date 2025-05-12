@@ -72,7 +72,7 @@ export class ScheduleService {
                 (nurseA, nurseB) => nurseA.assignedCount - nurseB.assignedCount
             );
 
-            const wouldBeDouble = [];
+            const wouldBeDouble: SimpleNurse[] = [];
             for (const nurse of available) {
                 if (shift.assignedNurses.length == shift.nursesRequired) break;
 

@@ -3,7 +3,12 @@ import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
 import { ShiftEntity } from "@src/shift/shift.entity";
-import { ScheduleDTO, ShiftDTO, ShiftRequirements } from "@m7-scheduler/dtos";
+import {
+    NurseDTO,
+    ScheduleDTO,
+    ShiftDTO,
+    ShiftRequirements,
+} from "@m7-scheduler/dtos";
 
 describe("AppController (e2e)", () => {
     let app: INestApplication;
@@ -89,12 +94,15 @@ describe("AppController (e2e)", () => {
 
     it("repeats schedule generation and reports shift requirement fulfillment", async () => {
         jest.setTimeout(60000); // 60 seconds
-        const THRESHOLD = 4 / 14; // 75% chance of a shift being available
+        const THRESHOLD = 4.5 / 14;
         const NUM_RUNS = 10;
         let totalShifts = 0;
         let totalMet = 0;
         let allResults: { met: number; total: number }[] = [];
         let availableShiftsCount = 0;
+        let doubleShifts = 0;
+        let tripleShifts = 0;
+
         generatedSchedules = [];
         // Get requirements (assume endpoint exists)
         const reqRes = await request(app.getHttpServer())
@@ -105,7 +113,7 @@ describe("AppController (e2e)", () => {
         const nursesRes = await request(app.getHttpServer())
             .get("/nurses")
             .expect(200);
-        const nurses = nursesRes.body;
+        const nurses: NurseDTO[] = nursesRes.body;
         for (let run = 0; run < NUM_RUNS; run++) {
             for (const nurse of nurses) {
                 const randomPrefs = Array(7)
@@ -147,6 +155,43 @@ describe("AppController (e2e)", () => {
                 .post("/schedules")
                 .expect(201);
             const schedule: ScheduleDTO = scheduleRes.body;
+            // Count double and triple shifts for each nurse
+            const shiftMapFlat: Record<string, boolean[]> = {};
+            for (const nurse of nurses) {
+                if (!shiftMapFlat[nurse.id]) {
+                    shiftMapFlat[nurse.id] = Array(14).fill(false);
+                }
+            }
+            // { nurseId: [shiftCountPerDay] }
+
+            for (const shift of schedule.shifts) {
+                let offset = 0;
+                if (shift.type == "night") {
+                    offset = 1;
+                }
+                shiftMapFlat[shift.nurse?.id][2 * shift.dayOfWeek + offset] =
+                    true;
+            }
+
+            // eslint-disable-next-line no-console
+            for (const shiftArr of Object.values(shiftMapFlat)) {
+                for (let i = 0; i < shiftArr.length; i++) {
+                    if (shiftArr[i] == false) continue;
+                    if (i > 0 && shiftArr[i - 1]) {
+                        if (i > 1 && shiftArr[i - 2]) {
+                            console.error(
+                                "TRIPLE SHIFT FOUND !!!!",
+                                schedule.id,
+                                shiftArr
+                            );
+                            tripleShifts++;
+                            continue;
+                        }
+                        doubleShifts++;
+                        continue;
+                    }
+                }
+            }
             generatedSchedules.push(schedule.id);
             // Count fulfillment
             let met = 0;
@@ -170,6 +215,16 @@ describe("AppController (e2e)", () => {
                 2
             )} over ${NUM_RUNS} runs.`
         );
+        const doubleShiftsPerSchedule = doubleShifts / NUM_RUNS;
+        console.log(
+            `\nAverage double shifts per schedule: ${doubleShiftsPerSchedule}`
+        );
+        const tripleShiftsPerSchedule = tripleShifts / NUM_RUNS;
+        console.log(
+            `\nAverage triple shifts per schedule: ${tripleShiftsPerSchedule}
+            \nThis should be 0`
+        );
+
         const percent = ((totalMet / totalShifts) * 100).toFixed(2);
         // eslint-disable-next-line no-console
         console.log(
