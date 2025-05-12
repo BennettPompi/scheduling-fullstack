@@ -1,30 +1,19 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ScheduleDTO, ShiftDTO } from "@m7-scheduler/dtos";
-import apiService from "../services/apiService";
-import { ShiftRequirements } from "@m7-scheduler/dtos";
+import { ShiftRequirements, NurseDTO } from "@m7-scheduler/dtos";
+
 interface ScheduleDisplayProps {
-    scheduleId: number;
+    schedule: ScheduleDTO;
     requirements: ShiftRequirements[];
+    nurses: NurseDTO[] | null;
 }
 
 const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
-    scheduleId,
+    schedule,
     requirements,
+    nurses,
 }) => {
-    const [schedule, setSchedule] = useState<ScheduleDTO | null>(null);
     const [showDetails, setShowDetails] = useState(false);
-    useEffect(() => {
-        const fetchSchedule = async () => {
-            try {
-                const data = await apiService.getSchedule(scheduleId);
-                setSchedule(data);
-            } catch (error) {
-                console.error("Error fetching schedule:", error);
-            }
-        };
-
-        fetchSchedule();
-    }, [scheduleId]);
 
     if (!schedule) {
         return <div>Loading...</div>;
@@ -43,7 +32,7 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
 
     // Build a lookup: { [nurseId]: nurseName }
     const nurseNameMap: Record<number, string> = {};
-
+    console.log("Schedule: ", schedule);
     schedule.shifts?.forEach((shift: ShiftDTO) => {
         nurseNameMap[shift.nurse.id] = shift.nurse.name;
         if (!nurseShiftMap[shift.nurse.id]) {
@@ -126,25 +115,29 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {Object.entries(nurseShiftMap).map(
-                                ([nurseId, shifts]) => (
-                                    <tr key={nurseId}>
-                                        <td>{nurseNameMap[Number(nurseId)]}</td>
-                                        {shifts.map((shift, idx) => [
-                                            <td
-                                                key={idx + "-day"}
-                                                style={{
-                                                    background: shift
-                                                        ? "#d4ffd4"
-                                                        : "#ffd4d4",
-                                                }}
-                                            >
-                                                {shift ? "X" : ""}
-                                            </td>,
-                                        ])}
-                                    </tr>
-                                )
-                            )}
+                            {nurses &&
+                                nurses.map((nurse) => {
+                                    const shifts =
+                                        nurseShiftMap[nurse.id] ??
+                                        Array(14).fill(false);
+                                    return (
+                                        <tr key={nurse.id}>
+                                            <td>{nurse.name}</td>
+                                            {shifts.map((shift, idx) => [
+                                                <td
+                                                    key={idx + "-day"}
+                                                    style={{
+                                                        background: shift
+                                                            ? "#d4ffd4"
+                                                            : "#ffd4d4",
+                                                    }}
+                                                >
+                                                    {shift ? "X" : ""}
+                                                </td>,
+                                            ])}
+                                        </tr>
+                                    );
+                                })}
                         </tbody>
                     </table>
                 </div>

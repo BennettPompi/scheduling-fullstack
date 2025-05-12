@@ -8,6 +8,7 @@ import {
 } from "@nestjs/common";
 import { ScheduleService } from "./schedule.service";
 import { ScheduleEntity } from "./schedule.entity";
+import { ScheduleDTO } from "@m7-scheduler/dtos";
 
 @Controller("schedules")
 export class ScheduleController {
@@ -19,7 +20,7 @@ export class ScheduleController {
     }
 
     @Get("/:id")
-    async getSchedule(@Param("id") id: number): Promise<any> {
+    async getSchedule(@Param("id") id: number): Promise<ScheduleDTO> {
         return this.scheduleService.getScheduleById(id);
     }
 

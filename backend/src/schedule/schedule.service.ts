@@ -109,7 +109,13 @@ export class ScheduleService {
     }
 
     async getSchedules(): Promise<ScheduleEntity[]> {
-        return this.scheduleRepository.find();
+        return this.scheduleRepository.find({
+            relations: {
+                shifts: {
+                    nurse: true,
+                },
+            },
+        });
     }
 
     async getScheduleById(id: number): Promise<any> {
