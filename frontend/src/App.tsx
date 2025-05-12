@@ -6,21 +6,22 @@ import NursePreferences from "./components/NursePreferences";
 import ScheduleDetails from "./components/ScheduleDetails";
 import { ScheduleDTO, ShiftRequirements } from "@m7-scheduler/dtos";
 
+export const days = [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday",
+];
+
 function App() {
     const [nurses, setNurses] = useState<{ id: number; name: string }[] | null>(
         null
     );
     const [requirements, setRequirements] = useState<ShiftRequirements[]>([]);
     const [schedules, setSchedules] = useState<ScheduleDTO[] | null>(null);
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
 
     useEffect(() => {
         const fetchNurses = async () => {
@@ -115,7 +116,9 @@ function App() {
                 <button
                     onClick={async () => {
                         const schedule = await api.default.generateSchedule();
-                        setSchedules([schedule]);
+                        const prevSchedules = schedules || [];
+                        const newSchedules = [...prevSchedules, schedule];
+                        setSchedules(newSchedules);
                     }}
                 >
                     Generate Schedule

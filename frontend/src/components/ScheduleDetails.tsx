@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { ScheduleDTO, ShiftDTO } from "@m7-scheduler/dtos";
 import { ShiftRequirements, NurseDTO } from "@m7-scheduler/dtos";
+import { days } from "../App";
 
 interface ScheduleDisplayProps {
     schedule: ScheduleDTO;
@@ -15,26 +16,9 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
 }) => {
     const [showDetails, setShowDetails] = useState(false);
 
-    if (!schedule) {
-        return <div>Loading...</div>;
-    }
-    // Map dayOfWeek number to day name
-    const days = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
     const nurseShiftMap: Record<number, boolean[]> = {};
 
-    // Build a lookup: { [nurseId]: nurseName }
-    const nurseNameMap: Record<number, string> = {};
-    console.log("Schedule: ", schedule);
     schedule.shifts?.forEach((shift: ShiftDTO) => {
-        nurseNameMap[shift.nurse.id] = shift.nurse.name;
         if (!nurseShiftMap[shift.nurse.id]) {
             nurseShiftMap[shift.nurse.id] = Array(14).fill(false);
         }
@@ -54,16 +38,14 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
             assignedCountArray[dayOfWeek * 2 + 1] += 1;
         }
     });
-    console.log("Assigned Count Array: ", assignedCountArray);
     const meetsReqsArr: boolean[] = assignedCountArray.map(
         (count, idx) => count >= reqsArray[idx]
     );
 
-    const dateString = new Date(schedule.created).toLocaleString();
     return (
         <div>
             <button onClick={() => setShowDetails(!showDetails)}>
-                {dateString}
+                {new Date(schedule.created).toLocaleString()}
             </button>
             {showDetails && (
                 <div>
@@ -94,8 +76,9 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                                     : "#ffd4d4",
                                         }}
                                     >
-                                        Day ({assignedCountArray[idx * 2] ?? 0}/
-                                        {reqsArray[idx * 2] ?? 0})
+                                        {`Day (${
+                                            assignedCountArray[idx * 2] ?? 0
+                                        }/ ${reqsArray[idx * 2] ?? 0})`}
                                     </th>,
                                     <th
                                         key={day + "-night"}
@@ -107,9 +90,9 @@ const ScheduleDetails: React.FC<ScheduleDisplayProps> = ({
                                                     : "#ffd4d4",
                                         }}
                                     >
-                                        Night (
-                                        {assignedCountArray[idx * 2 + 1] ?? 0}/
-                                        {reqsArray[idx * 2 + 1] ?? 0})
+                                        {`Night (${
+                                            assignedCountArray[idx * 2 + 1] ?? 0
+                                        }/ ${reqsArray[idx * 2 + 1] ?? 0})`}
                                     </th>,
                                 ])}
                             </tr>
