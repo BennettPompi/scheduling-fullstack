@@ -1,6 +1,6 @@
 import * as fs from "fs";
 import * as path from "path";
-import { Injectable, NotImplementedException } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { ShiftEntity, ShiftRequirementsRaw } from "./shift.entity";

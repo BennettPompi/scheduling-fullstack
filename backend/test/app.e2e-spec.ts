@@ -2,7 +2,6 @@ import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
 import { AppModule } from "./../src/app.module";
-import { ShiftEntity } from "@src/shift/shift.entity";
 import {
     NurseDTO,
     ScheduleDTO,
@@ -23,76 +22,7 @@ describe("AppController (e2e)", () => {
         await app.init();
     });
 
-    it("/ (GET)", () => {
-        return request(app.getHttpServer())
-            .get("/")
-            .expect(200)
-            .expect("Hello World!");
-    });
-    it("/nurse (GET)", () => {
-        return request(app.getHttpServer()).get("/nurses").expect(200);
-    });
-
-    it("/nurses (GET) and update preferences, then generate schedule", async () => {
-        // 1. Get all nurses
-        const nursesRes = await request(app.getHttpServer())
-            .get("/nurses")
-            .expect(200);
-        const nurses = nursesRes.body;
-
-        expect(Array.isArray(nurses)).toBe(true);
-        expect(nurses.length).toBeGreaterThan(0);
-
-        // 2. Update each nurse's preferences randomly
-        for (const nurse of nurses) {
-            const randomPrefs = Array(7)
-                .fill(0)
-                .map(() => ({
-                    dayShift: Math.random() > 0.75,
-                    nightShift: Math.random() > 0.75,
-                }));
-            let availableShifts = randomPrefs.filter(
-                (pref) => pref.dayShift || pref.nightShift
-            );
-
-            while (availableShifts.length < 3) {
-                const randomIndex = Math.floor(
-                    Math.random() * randomPrefs.length
-                );
-                if (
-                    !randomPrefs[randomIndex].dayShift &&
-                    !randomPrefs[randomIndex].nightShift
-                ) {
-                    if (Math.random() > 0.5) {
-                        randomPrefs[randomIndex].dayShift = true;
-                    } else {
-                        randomPrefs[randomIndex].nightShift = true;
-                    }
-                    availableShifts = randomPrefs.filter(
-                        (pref) => pref.dayShift || pref.nightShift
-                    );
-                }
-            }
-
-            expect(availableShifts.length).toBeGreaterThanOrEqual(3);
-
-            await request(app.getHttpServer())
-                .post("/nurses/preferences")
-                .send({ id: nurse.id, preferences: randomPrefs })
-                .expect(201);
-        }
-
-        // 3. Generate a schedule
-        const scheduleRes = await request(app.getHttpServer())
-            .post("/schedules")
-            .expect(201);
-        const schedule = scheduleRes.body;
-        expect(schedule).toHaveProperty("id");
-        expect(Array.isArray(schedule.shifts)).toBe(true);
-        expect(schedule.shifts.length).toBeGreaterThan(0);
-    });
-
-    it("repeats schedule generation and reports shift requirement fulfillment", async () => {
+    it("Create schedules with random preferences, record summary stats", async () => {
         jest.setTimeout(60000); // 60 seconds
         const THRESHOLD = 4.5 / 14;
         const NUM_RUNS = 10;
@@ -169,7 +99,7 @@ describe("AppController (e2e)", () => {
                 if (shift.type == "night") {
                     offset = 1;
                 }
-                shiftMapFlat[shift.nurse?.id][2 * shift.dayOfWeek + offset] =
+                shiftMapFlat[shift.nurse!.id][2 * shift.dayOfWeek + offset] =
                     true;
             }
 

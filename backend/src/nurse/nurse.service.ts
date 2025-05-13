@@ -28,6 +28,6 @@ export class NurseService {
     }
     async getPreferences(id: number) {
         const nurse = await this.nurseRepository.findOneBy({ id });
-        return nurse?.preferences;
+        return nurse?.preferences ?? [];
     }
 }
