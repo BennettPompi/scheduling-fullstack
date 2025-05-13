@@ -6,6 +6,7 @@ import {
     NurseDTO,
     ScheduleDTO,
     ShiftDTO,
+    ShiftPreference,
     ShiftRequirements,
 } from "@m7-scheduler/dtos";
 
@@ -24,7 +25,7 @@ describe("AppController (e2e)", () => {
 
     it("Create schedules with random preferences, record summary stats", async () => {
         jest.setTimeout(60000); // 60 seconds
-        const THRESHOLD = 4.5 / 14;
+        const THRESHOLD = 7 / 14;
         const NUM_RUNS = 10;
         let totalShifts = 0;
         let totalMet = 0;
@@ -32,7 +33,14 @@ describe("AppController (e2e)", () => {
         let availableShiftsCount = 0;
         let doubleShifts = 0;
         let tripleShifts = 0;
-
+        const getAvailableCount = (prefs: ShiftPreference[]) => {
+            let count = 0;
+            for (const pref of prefs) {
+                if (pref.dayShift) count++;
+                if (pref.nightShift) count++;
+            }
+            return count;
+        };
         generatedSchedules = [];
         // Get requirements (assume endpoint exists)
         const reqRes = await request(app.getHttpServer())
@@ -52,10 +60,8 @@ describe("AppController (e2e)", () => {
                         dayShift: Math.random() > 1 - THRESHOLD,
                         nightShift: Math.random() > 1 - THRESHOLD,
                     }));
-                let availableShifts = randomPrefs.filter(
-                    (pref) => pref.dayShift || pref.nightShift
-                );
-                while (availableShifts.length < 3) {
+                let availableShifts = getAvailableCount(randomPrefs);
+                while (availableShifts < 3) {
                     const randomIndex = Math.floor(
                         Math.random() * randomPrefs.length
                     );
@@ -68,13 +74,11 @@ describe("AppController (e2e)", () => {
                         } else {
                             randomPrefs[randomIndex].nightShift = true;
                         }
-                        availableShifts = randomPrefs.filter(
-                            (pref) => pref.dayShift || pref.nightShift
-                        );
+                        availableShifts = getAvailableCount(randomPrefs);
                     }
                 }
-                expect(availableShifts.length).toBeGreaterThanOrEqual(3);
-                availableShiftsCount += availableShifts.length;
+                expect(availableShifts).toBeGreaterThanOrEqual(3);
+                availableShiftsCount += availableShifts;
                 await request(app.getHttpServer())
                     .post("/nurses/preferences")
                     .send({ id: nurse.id, preferences: randomPrefs })

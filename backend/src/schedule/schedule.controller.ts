@@ -21,7 +21,7 @@ export class ScheduleController {
     }
 
     @Get("/:id")
-    async getSchedule(@Param("id") id: number): Promise<ScheduleDTO> {
+    async getSchedule(@Param("id") id: number): Promise<ScheduleEntity> {
         return this.scheduleService.getScheduleById(id);
     }
 
